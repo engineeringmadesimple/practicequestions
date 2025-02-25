@@ -4,88 +4,807 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engineering Quiz</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --gray-light: #f3f4f6;
+            --gray: #9ca3af;
+            --gray-dark: #4b5563;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --red: #ef4444;
+            --green: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gray-light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .topic-selector {
+            margin-bottom: 2rem;
+        }
+        
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray);
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            appearance: none;
+        }
+        
+        .select-wrapper::after {
+            content: "▼";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-dark);
+            pointer-events: none;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        button:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .pro-badge {
+            background-color: var(--red);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .quiz-container {
+            display: none;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .quiz-progress {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        
+        .question-container {
+            margin-bottom: 2rem;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .options {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: var(--gray-light);
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .option-prefix {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+        
+        .selected .option-prefix {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .option-text {
+            flex: 1;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-light);
+            color: var(--text);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray);
+        }
+        
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+        
+        .results-header {
+            margin-bottom: 2rem;
+        }
+        
+        .results-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .results-subtitle {
+            color: var(--text-light);
+        }
+        
+        .score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1.5rem 0;
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .restart-btn {
+            background-color: var(--gray-light);
+            color: var(--text);
+        }
+        
+        .pro-tooltip {
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Blurred pro options */
+        .pro-option {
+            filter: blur(1px);
+            opacity: 0.7;
+            position: relative;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <a href="https://engineeringquiz.github.io/homepage/" class="return-home-btn">Return to Homepage</a>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container">
-        <h1>Engineering Quiz</h1>
+    <div class="container">
+        <header>
+            <h1>Engineering Quiz Challenge</h1>
+            <p class="description">Test your knowledge with our practice questions</p>
+        </header>
         
-        <!-- Quiz Controls -->
-        <section class="quiz-controls">
-            <select class="topic-select" id="topicSelect">
-                <option value="">Select a Topic</option>
-                <option value="Civil Engineering">Civil Engineering</option>
-                <option value="Mechanical Engineering">Mechanical Engineering</option>
-                <option value="Electrical Engineering">Electrical Engineering</option>
-            </select>
-
-            <div class="progress-container" id="progressContainer" style="display: none;">
-                <div class="progress-text" id="progressText">Questions Answered: 0/5</div>
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-        </section>
-
-        <!-- Quiz Content -->
-        <section id="quizContainer" class="quiz-container" style="display: none;"></section>
-
-        <!-- Donation Section -->
-        <section id="donate" class="donate-section">
-            <h2 class="donation-title">Support engineering education for aspiring professionals worldwide!</h2>
+        <div id="topic-selector" class="topic-selector">
+            <h2>Select an Engineering Topic</h2>
+            <p class="description">Choose a topic to start your 10-question quiz session</p>
             
-            <div class="donation-image-container">
-                <img src="https://example.com/engineering-image.jpg"
-                     alt="Engineering education"
-                     class="donation-image"
-                     loading="lazy">
+            <div class="select-wrapper">
+                <select id="topic-dropdown">
+                    <option value="" disabled selected>Select a topic...</option>
+                    <option value="civil">Civil Engineering</option>
+                    <option value="mechanical">Mechanical Engineering</option>
+                    <option value="electrical">Electrical Engineering</option>
+                    <option value="chemical" class="pro-option">Chemical Engineering</option>
+                    <option value="software" class="pro-option">Software Engineering</option>
+                    <option value="biomedical" class="pro-option">Biomedical Engineering</option>
+                    <option value="aerospace" class="pro-option">Aerospace Engineering</option>
+                    <option value="environmental" class="pro-option">Environmental Engineering</option>
+                </select>
             </div>
             
-            <p class="donation-description">
-                Many students lack access to engineering resources. Your support can help create accessible tools to inspire the next generation of engineers.
-            </p>
-        </section>
-    </main>
-
-    <!-- Fixed Elements -->
-    <div class="donate-banner">
-        <a href="https://engineeringdonations.github.io/donate/" target="_blank" rel="noopener noreferrer">
-            PLEASE CLICK HERE TO DONATE
-        </a>
-    </div>
-
-    <!-- Telegram Popup -->
-    <div class="telegram-popup" id="telegramPopup" style="display: none;">
-        <div class="popup-content">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            
-            <div class="popup-header">
-                <img src="https://logos-world.net/wp-content/uploads/2021/03/Telegram-Symbol.png" 
-                     alt="Telegram Logo" 
-                     class="telegram-logo">
-                <h2>🚨 Limited Time Access! 🚨</h2>
+            <button id="start-quiz" disabled>Start Quiz</button>
+        </div>
+        
+        <div id="quiz-container" class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-title" id="quiz-title">Civil Engineering Quiz</div>
+                <div class="quiz-progress">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
             </div>
-
-            <div class="popup-body">
-                <p class="urgent-msg">⚠️ Our Telegram group is closing in less than 24 hours!</p>
-                <p>Join our exclusive Telegram channel to access:</p>
-                <ul>
-                    <li>📚 Free Video Lectures</li>
-                    <li>📝 Study Materials</li>
-                    <li>👥 Community Support</li>
-                    <li>🎯 Practice Problems</li>
-                </ul>
-                <a href="https://t.me/engineering101" class="join-btn" target="_blank">
-                    Join Now Before It's Too Late!
-                </a>
+            
+            <div class="question-container">
+                <div id="question" class="question">Loading question...</div>
+                <div id="options" class="options">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="quiz-navigation">
+                <button id="back-btn" class="back-btn">Back to Topics</button>
+                <button id="next-btn">Next Question</button>
+            </div>
+        </div>
+        
+        <div id="results-container" class="results-container">
+            <div class="results-header">
+                <div class="results-title">Quiz Complete!</div>
+                <div class="results-subtitle" id="results-topic">Civil Engineering Quiz</div>
+            </div>
+            
+            <div class="score" id="score">7/10</div>
+            <div class="score-text" id="score-text">Great job! You scored 70%</div>
+            
+            <div class="actions">
+                <button id="restart-btn" class="restart-btn">Try Another Topic</button>
+                <button id="retry-btn">Retry This Topic</button>
             </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
+    
+    <div id="pro-tooltip" class="pro-tooltip">UPGRADE TO PRO</div>
+    
+    <script>
+        // DOM Elements
+        const topicSelector = document.getElementById('topic-selector');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const topicDropdown = document.getElementById('topic-dropdown');
+        const startQuizBtn = document.getElementById('start-quiz');
+        const backBtn = document.getElementById('back-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const quizTitle = document.getElementById('quiz-title');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const resultsTopic = document.getElementById('results-topic');
+        const scoreElement = document.getElementById('score');
+        const scoreTextElement = document.getElementById('score-text');
+        const proTooltip = document.getElementById('pro-tooltip');
+        
+        // Quiz state
+        let currentTopic = '';
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = [];
+        
+        // Question banks for each topic
+        const questionBanks = {
+            civil: [
+                {
+                    question: "What is the primary component of concrete?",
+                    options: ["Cement", "Sand", "Gravel", "Water"],
+                    answer: 0
+                },
+                {
+                    question: "Which type of foundation is most suitable for clay soil?",
+                    options: ["Raft foundation", "Pile foundation", "Strip foundation", "Pad foundation"],
+                    answer: 1
+                },
+                {
+                    question: "What is the purpose of a retaining wall?",
+                    options: ["To provide shade", "To hold back soil", "To support a roof", "To divide properties"],
+                    answer: 1
+                },
+                {
+                    question: "What is the main cause of reinforcement corrosion in concrete structures?",
+                    options: ["Carbonation", "Chloride attack", "Sulfate attack", "Freeze-thaw cycles"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these is NOT a type of beam?",
+                    options: ["Simply supported beam", "Cantilever beam", "Continuous beam", "Columnar beam"],
+                    answer: 3
+                },
+                {
+                    question: "What does AASHTO stand for in civil engineering?",
+                    options: ["American Association of State Highway and Transportation Officials", "American Association of Structural and Highway Testing Organizations", "Association of American State Highway Technical Officers", "Association of Architectural and Structural Highway Testing Organizations"],
+                    answer: 0
+                },
+                {
+                    question: "What is the slump test used to measure?",
+                    options: ["Soil density", "Concrete workability", "Steel tensile strength", "Asphalt durability"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these is NOT a common type of bridge?",
+                    options: ["Arch bridge", "Suspension bridge", "Cantilever bridge", "Columnar bridge"],
+                    answer: 3
+                },
+                {
+                    question: "What is the purpose of expansion joints in concrete structures?",
+                    options: ["To improve aesthetics", "To allow for thermal expansion and contraction", "To increase structural strength", "To reduce construction costs"],
+                    answer: 1
+                },
+                {
+                    question: "What material is primarily used for reinforcement in concrete?",
+                    options: ["Copper", "Aluminum", "Steel", "Titanium"],
+                    answer: 2
+                },
+                {
+                    question: "Which test is used to determine the compressive strength of concrete?",
+                    options: ["Slump test", "Cube test", "Tension test", "Vebe test"],
+                    answer: 1
+                },
+                {
+                    question: "What is the primary function of a dam?",
+                    options: ["To generate electricity", "To provide drinking water", "To control water flow", "To prevent flooding"],
+                    answer: 2
+                },
+                {
+                    question: "What type of soil is most susceptible to liquefaction during earthquakes?",
+                    options: ["Clay", "Silt", "Sand", "Gravel"],
+                    answer: 2
+                },
+                {
+                    question: "What is the purpose of a culvert in highway design?",
+                    options: ["To reduce speed", "To allow water to pass under the roadway", "To provide a rest area", "To support bridges"],
+                    answer: 1
+                },
+                {
+                    question: "What does BOQ stand for in construction?",
+                    options: ["Bill of Quantities", "Building Operations Quality", "Base of Quality", "Budget Overrun Quota"],
+                    answer: 0
+                }
+            ],
+            mechanical: [
+                {
+                    question: "What is the First Law of Thermodynamics?",
+                    options: ["Energy can be created but not destroyed", "Energy cannot be created or destroyed", "Energy can be destroyed but not created", "Energy can be both created and destroyed"],
+                    answer: 1
+                },
+                {
+                    question: "Which material has the highest thermal conductivity?",
+                    options: ["Wood", "Plastic", "Copper", "Concrete"],
+                    answer: 2
+                },
+                {
+                    question: "What type of engine operates on the Otto cycle?",
+                    options: ["Diesel engine", "Gas turbine", "Steam engine", "Gasoline engine"],
+                    answer: 3
+                },
+                {
+                    question: "What is the purpose of a flywheel in a machine?",
+                    options: ["To increase speed", "To store energy", "To reduce friction", "To change direction"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these is NOT a type of gear?",
+                    options: ["Spur gear", "Helical gear", "Worm gear", "Linear gear"],
+                    answer: 3
+                },
+                {
+                    question: "What does FEA stand for in mechanical engineering?",
+                    options: ["Finite Element Analysis", "Fluid Energy Analysis", "Force and Energy Application", "Functional Equipment Assessment"],
+                    answer: 0
+                },
+                {
+                    question: "Which principle explains why airplanes can fly?",
+                    options: ["Newton's Third Law", "Bernoulli's Principle", "Pascal's Law", "Archimedes' Principle"],
+                    answer: 1
+                },
+                {
+                    question: "What type of stress tries to pull material apart?",
+                    options: ["Compressive stress", "Shear stress", "Tensile stress", "Torsional stress"],
+                    answer: 2
+                },
+                {
+                    question: "What is the main component of a hydraulic system?",
+                    options: ["Air compressor", "Pump", "Electric motor", "Gear box"],
+                    answer: 1
+                },
+                {
+                    question: "Which type of bearing allows for rotation with minimal friction?",
+                    options: ["Ball bearing", "Sleeve bearing", "Thrust bearing", "Journal bearing"],
+                    answer: 0
+                },
+                {
+                    question: "What is the function of a heat exchanger?",
+                    options: ["To generate heat", "To convert heat to electricity", "To transfer heat between fluids", "To measure heat capacity"],
+                    answer: 2
+                },
+                {
+                    question: "What is the primary purpose of lubrication in mechanical systems?",
+                    options: ["To reduce noise", "To reduce friction", "To increase power", "To prevent corrosion"],
+                    answer: 1
+                },
+                {
+                    question: "Which material property represents the ability to return to its original shape after deformation?",
+                    options: ["Elasticity", "Plasticity", "Ductility", "Malleability"],
+                    answer: 0
+                },
+                {
+                    question: "What does CNC stand for in manufacturing?",
+                    options: ["Computer Numerical Control", "Computerized Network Control", "Continuous Numerical Calculation", "Central Network Computing"],
+                    answer: 0
+                },
+                {
+                    question: "Which law states that the pressure in a fluid at rest is the same in all directions?",
+                    options: ["Newton's Law", "Bernoulli's Law", "Pascal's Law", "Boyle's Law"],
+                    answer: 2
+                }
+            ],
+            electrical: [
+                {
+                    question: "What is Ohm's Law?",
+                    options: ["V = IR", "P = VI", "V = P/I", "I = P/V"],
+                    answer: 0
+                },
+                {
+                    question: "Which component stores electrical energy in an electric field?",
+                    options: ["Resistor", "Inductor", "Capacitor", "Transistor"],
+                    answer: 2
+                },
+                {
+                    question: "What is the unit of electrical resistance?",
+                    options: ["Volt", "Ampere", "Ohm", "Watt"],
+                    answer: 2
+                },
+                {
+                    question: "Which semiconductor device is used as a voltage regulator?",
+                    options: ["Diode", "Transistor", "Zener diode", "MOSFET"],
+                    answer: 2
+                },
+                {
+                    question: "What does AC stand for in electrical engineering?",
+                    options: ["Active Current", "Alternating Current", "Ampere Conductor", "Average Conduction"],
+                    answer: 1
+                },
+                {
+                    question: "Which law states that the voltage around a closed loop is equal to the sum of the voltage drops in the loop?",
+                    options: ["Ohm's Law", "Faraday's Law", "Kirchhoff's Voltage Law", "Lenz's Law"],
+                    answer: 2
+                },
+                {
+                    question: "What is the function of a transformer?",
+                    options: ["To convert AC to DC", "To change voltage levels", "To store electrical energy", "To regulate current flow"],
+                    answer: 1
+                },
+                {
+                    question: "Which component opposes changes in current?",
+                    options: ["Resistor", "Capacitor", "Inductor", "Diode"],
+                    answer: 2
+                },
+                {
+                    question: "What is the standard frequency of AC power in the United States?",
+                    options: ["50 Hz", "60 Hz", "120 Hz", "220 Hz"],
+                    answer: 1
+                },
+                {
+                    question: "Which logic gate outputs TRUE only when all inputs are TRUE?",
+                    options: ["OR gate", "AND gate", "NOT gate", "XOR gate"],
+                    answer: 1
+                },
+                {
+                    question: "What does PWM stand for in electrical engineering?",
+                    options: ["Power Width Management", "Pulse Width Modulation", "Phase Waveform Measurement", "Potential Wattage Maximizer"],
+                    answer: 1
+                },
+                {
+                    question: "Which device converts mechanical energy into electrical energy?",
+                    options: ["Motor", "Generator", "Transformer", "Capacitor"],
+                    answer: 1
+                },
+                {
+                    question: "What is the purpose of a fuse in an electrical circuit?",
+                    options: ["To increase voltage", "To protect against overcurrent", "To store energy", "To amplify signals"],
+                    answer: 1
+                },
+                {
+                    question: "Which material is the best electrical conductor under normal conditions?",
+                    options: ["Gold", "Silver", "Copper", "Aluminum"],
+                    answer: 1
+                },
+                {
+                    question: "What does EMF stand for in electrical engineering?",
+                    options: ["Electro-Mechanical Force", "Electro-Magnetic Field", "Electro-Motive Force", "Electronic Magnetic Flux"],
+                    answer: 2
+                }
+            ]
+        };
+        
+        // Initialize the quiz
+        function init() {
+            // Enable/disable start button based on topic selection
+            topicDropdown.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                currentTopic = this.value;
+                
+                if (currentTopic && !selectedOption.classList.contains('pro-option')) {
+                    startQuizBtn.disabled = false;
+                } else {
+                    startQuizBtn.disabled = true;
+                }
+            });
+            
+            // Handle PRO option selection
+            topicDropdown.addEventListener('mousedown', function(event) {
+                const select = this;
+                setTimeout(function() {
+                    const selectedOption = select.options[select.selectedIndex];
+                    if (selectedOption && selectedOption.classList.contains('pro-option')) {
+                        showProTooltip(event);
+                        // Reset selection to previous or empty
+                        select.value = currentTopic || "";
+                    }
+                }, 100);
+            });
+            
+            // Start quiz button click handler
+            startQuizBtn.addEventListener('click', startQuiz);
+            
+            // Back button click handler
+            backBtn.addEventListener('click', function() {
+                showTopicSelector();
+            });
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', goToNextQuestion);
+            
+            // Restart button click handler
+            restartBtn.addEventListener('click', function() {
+                showTopicSelector();
+            });
+            
+            // Retry button click handler
+            retryBtn.addEventListener('click', function() {
+                startQuiz();
+            });
+        }
+        
+        // Start the quiz with the selected topic
+        function startQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswers = Array(10).fill(null);
+            
+            // Get 10 random questions for the selected topic
+            questions = getRandomQuestions(questionBanks[currentTopic], 10);
+            
+            // Update UI
+            quizTitle.textContent = getTopicName(currentTopic) + " Quiz";
+            totalQuestionsSpan.textContent = questions.length;
+            
+            // Show the quiz container
+            topicSelector.style.display = 'none';
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            // Load the first question
+            loadQuestion();
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+            
+            // Update question text
+            questionElement.textContent = question.question;
+            
+            // Clear previous options
+            optionsElement.innerHTML = '';
+            
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (selectedAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <div class="option-prefix">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // Update button text based on question
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+            } else {
+                nextBtn.textContent = 'Next Question';
+            }
+        }
+        
+        // Select an option
+        function selectOption(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI to show selected option
+            const options = optionsElement.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Go to next question or finish quiz
+        function goToNextQuestion() {
+            // Check if an option is selected
+            if (selectedAnswers[currentQuestionIndex] === null) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+            
+            // Check if current answer is correct
+            if (selectedAnswers[currentQuestionIndex] === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+            
+            // Go to next question or finish
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        // Finish quiz and show results
+        function finishQuiz() {
+            // Calculate score
+            const percentage = (score / questions.length) * 100;
+            
+            // Update results UI
+            resultsTopic.textContent = getTopicName(currentTopic) + " Quiz";
+            scoreElement.textContent = `${score}/${questions.length}`;
+            scoreTextElement.textContent = `You scored ${percentage}%`;
+            
+            // Show results
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+        
+        // Show topic selector
+        function showTopicSelector() {
+            topicSelector.style.display = 'block';
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+        }
+        
+        // Get random questions from a question bank
+        function getRandomQuestions(bank, count) {
+            const shuffled = [...bank].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        // Get topic name from topic code
+        function getTopicName(topic) {
+            switch(topic) {
+                case 'civil': return 'Civil Engineering';
+                case 'mechanical': return 'Mechanical Engineering';
+                case 'electrical': return 'Electrical Engineering';
+                default: return '';
+            }
+        }
+        
+        // Show PRO tooltip
+        function showProTooltip(event) {
+            proTooltip.style.left = `${event.pageX}px`;
+            proTooltip.style.top = `${event.pageY - 40}px`;
+            proTooltip.style.opacity = '1';
+            
+            setTimeout(() => {
+                proTooltip.style.opacity = '0';
+            }, 2000);
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>
