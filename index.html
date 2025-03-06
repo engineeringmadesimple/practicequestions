@@ -269,7 +269,7 @@
             z-index: 1000;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease-in-out;
         }
         
         /* Blurred pro options */
@@ -468,7 +468,7 @@
                     answer: 1
                 },
                 {
-                    question: "What does the term ‘curing’ refer to in concrete construction?",
+                    question: "What does the term 'curing' refer to in concrete construction?",
                     options: ["Mixing the concrete", "Placing the concrete", "Maintaining moisture for strength development", "Breaking the concrete"],
                     answer: 2
                 },
@@ -648,7 +648,7 @@
                     answer: 1
                 },
                 {
-                    question: "What does the term ‘damp proof course’ (DPC) refer to?",
+                    question: "What does the term 'damp proof course' (DPC) refer to?",
                     options: ["A waterproof layer preventing moisture rise", "A drainage system for roofs", "A type of reinforced concrete slab", "A method for reducing concrete shrinkage"],
                     answer: 0
                 },
@@ -1273,7 +1273,7 @@
                     answer: 1
                 },
                 {
-                    question: "What does the term ‘fatigue’ mean in structural engineering?",
+                    question: "What does the term 'fatigue' mean in structural engineering?",
                     options: ["Failure due to repeated loads", "Failure due to excessive temperature", "Failure due to improper design", "Failure due to overloading"],
                     answer: 0
                 },
@@ -2020,7 +2020,7 @@
             "answer": 1
         },
         {
-            "question": "What type of mechanism is used in a car’s steering system?",
+            "question": "What type of mechanism is used in a car's steering system?",
             "options": ["Rack and pinion", "Worm gear", "Helical gear", "Bevel gear"],
             "answer": 0
         },
@@ -2076,7 +2076,7 @@
         },
         {
             "question": "Which law states that the total energy in a closed system remains constant?",
-            "options": ["First Law of Thermodynamics", "Second Law of Thermodynamics", "Newton's Third Law", "Bernoulli’s Principle"],
+            "options": ["First Law of Thermodynamics", "Second Law of Thermodynamics", "Newton's Third Law", "Bernoulli's Principle"],
             "answer": 0
         },
         {
@@ -2236,7 +2236,7 @@
         },
         {
             "question": "Which law states that the pressure of a gas decreases as its volume increases at constant temperature?",
-            "options": ["Boyle’s Law", "Charles’s Law", "Pascal’s Law", "Newton’s Law"],
+            "options": ["Boyle's Law", "Charles's Law", "Pascal's Law", "Newton's Law"],
             "answer": 0
         },
         {
@@ -2276,7 +2276,7 @@
         },
         {
             "question": "Which law states that strain in a material is directly proportional to stress within the elastic limit?",
-            "options": ["Pascal’s Law", "Hooke’s Law", "Newton’s Law", "Boyle’s Law"],
+            "options": ["Pascal's Law", "Hooke's Law", "Newton's Law", "Boyle's Law"],
             "answer": 1
         },
         {
@@ -2296,7 +2296,7 @@
         },
         {
             "question": "Which principle explains why ships float on water?",
-            "options": ["Newton’s Third Law", "Bernoulli’s Principle", "Pascal’s Law", "Archimedes’ Principle"],
+            "options": ["Newton's Third Law", "Bernoulli's Principle", "Pascal's Law", "Archimedes' Principle"],
             "answer": 3
         },
         {
@@ -3847,7 +3847,7 @@
     "answer": 1
 },
 {
-    "question": "What is the relationship between voltage, current, and resistance according to Ohm’s Law?",
+    "question": "What is the relationship between voltage, current, and resistance according to Ohm's Law?",
     "options": ["V = I × R", "V = I / R", "V = R / I", "V = I + R"],
     "answer": 0
 },
@@ -4179,12 +4179,18 @@
         
         // Show PRO tooltip
         function showProTooltip(event) {
-            proTooltip.style.left = `${event.pageX}px`;
-            proTooltip.style.top = `${event.pageY - 40}px`;
-            proTooltip.style.opacity = '1';
+            const tooltip = document.getElementById('pro-tooltip');
+            const rect = tooltip.getBoundingClientRect();
+            const x = event.clientX;
+            const y = event.clientY;
+            
+            // Position tooltip above the cursor
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y - rect.height - 10}px`;
+            tooltip.style.opacity = '1';
             
             setTimeout(() => {
-                proTooltip.style.opacity = '0';
+                tooltip.style.opacity = '0';
             }, 2000);
         }
         
